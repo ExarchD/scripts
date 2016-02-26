@@ -1,0 +1,36 @@
+#!/bin/bash
+
+running=`ps -A | grep break | wc -l`
+if [ $running -gt 2 ]
+then 
+    exit
+fi
+
+number=$RANDOM
+let "number %= 80"
+let walk=1
+while [ $walk -gt 0 ]
+do
+    echo "sleeping ${number}"
+    sleep ${number}m
+    zenity --question --text="You should take a 5 minute break, walk around a bit. Want to do this now?" --cancel-label=Later --ok-label=Now
+    case $? in
+        0)
+            echo "Now."
+            walk=-1
+            ;;
+        1)
+            echo "Later."
+            let "walk=$walk+1"
+            ;;
+        -1)
+            echo "An unexpected error has occurred."
+            ;;
+    esac
+    number=$RANDOM
+    echo $number
+    let "number %= 80"
+    echo $number
+    number=`echo "$number / $walk" | bc`
+    echo $number
+done
