@@ -2,7 +2,7 @@
 # the echos were just for fast debugging, now they're commented out
 
 # check if the script is already running
-running=`ps -A | grep break | wc -l`
+running=`ps -A | grep breaktime_adv | wc -l`
 if [ $running -gt 2 ]
 then 
     exit

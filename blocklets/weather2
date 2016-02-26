@@ -1,5 +1,8 @@
 #!/bin/bash
+# this script gets the weather report for 3 cities that I'm curious about
+# it integrates with i3blocks
 
+# create a temp file for storing the current selected city
 CACHE=/tmp/weather
 if [ ! -f /tmp/weather ]
 then
@@ -8,6 +11,7 @@ then
     echo "Saint_Genis" > /tmp/weather
 fi
 
+# create a temp file for storing the unit we want to see, Celsius or F
 if [ ! -f /tmp/unit ]
 then
     echo "HI"
@@ -15,6 +19,7 @@ then
     echo "1" > /tmp/unit
 fi
 
+# ughh....very very unclear and inefficient way of doing this...but...it works
 weathervalue=`cat /tmp/weather`
 
 
@@ -32,6 +37,8 @@ do
     fi
 done
 
+# read input, ie BLOCK_BUTTON
+# 4/5 is scroll up/down
 if [[ $BLOCK_BUTTON == 4 ]]
 then
     current=$[$current-1]
@@ -58,6 +65,7 @@ fi
 
 METRIC=`cat /tmp/unit`
 
+# right click changes units
 if [[ $BLOCK_BUTTON == 3 ]]
 then
     if [[ $METRIC == 1 ]]
@@ -71,6 +79,7 @@ then
 fi
 METRIC=`cat /tmp/unit`
 
+# convert integers to actual locations legible by the website's api
 if [[ $current == 1 ]]
 then
 loc_id=52246
@@ -87,7 +96,7 @@ fi
 
 
 
-# echo -n "$weathervalue: " | sed 's/_/ /'
+# output!
 fullreport=`curl -s http://rss.accuweather.com/rss/liveweather_rss.asp\?metric\=${METRIC}\&locCode\="$loc_id" | perl -ne 'if (/Currently/) {chomp;/\<title\>Currently: (.*)?\<\/title\>/; print "$1"; }'`
 shortreport=`echo $fullreport | awk -F': ' '{print $2}'`
 color=#00FF00

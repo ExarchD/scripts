@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# temp file for storing timezone location
 CACHE=/tmp/tz
 if [ ! -f /tmp/tz ]
 then
@@ -12,10 +13,13 @@ tzvalue=`cat /tmp/tz`
 color=#4e9a06
 
 
+# timezones I'm interested in
+# you could have n timezones, it just would be annoying to scroll through
 timezone[1]=America/Chicago
 timezone[2]=Brazil/East
 timezone[3]=Europe/Paris
 
+# ugly loop
 index=0;
 for item in ${timezone[*]}
 do
@@ -26,6 +30,8 @@ do
     fi
 done
 
+# read input
+# 4/5 scroll up/down
 case $BLOCK_BUTTON in
     4)
         current=$[$current-1]
@@ -49,6 +55,7 @@ case $BLOCK_BUTTON in
         echo $tzvalue
         echo $tzvalue
         ;;
+        # right click shows timezone
     3)
         echo $tzvalue
         echo $tzvalue
@@ -59,12 +66,15 @@ case $BLOCK_BUTTON in
         echo "$dateval"
         echo "$shortval"
         ;;
+        # left click shows current time
     [1])
         dateval=`TZ=$tzvalue date +%a\ %b\ %d\ %k:%M:%S`
         shortval=`TZ=$tzvalue date +%k:%M:%S`
         echo "$dateval"
         echo "$shortval"
         ;;
+        # mid click shows the calendar, in my case orage
+        # needs to already be running
     [2])
         orage -t
         dateval=`TZ=$tzvalue date +%a\ %b\ %d\ %k:%M:%S`
