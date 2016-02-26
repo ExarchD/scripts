@@ -1,0 +1,75 @@
+#!/bin/bash
+
+CACHE=/tmp/tz
+if [ ! -f /tmp/tz ]
+then
+    echo "HI"
+    touch /tmp/tz
+    echo "Europe/Paris" > /tmp/tz
+fi
+
+tzvalue=`cat /tmp/tz`
+color=#4e9a06
+
+
+timezone[1]=America/Chicago
+timezone[2]=Brazil/East
+timezone[3]=Europe/Paris
+
+index=0;
+for item in ${timezone[*]}
+do
+    index=$[$index+1]
+    if [[ $tzvalue == $item ]]
+    then
+        current=$index
+    fi
+done
+
+case $BLOCK_BUTTON in
+    4)
+        current=$[$current-1]
+        if [[ $current == 0 ]]
+        then
+            current=${#timezone[@]} 
+        fi
+        echo ${timezone[$current]} > /tmp/tz
+        tzvalue=`cat /tmp/tz`
+        echo $tzvalue
+        echo $tzvalue
+        ;;
+    5)
+        current=$[$current+1] 
+        if [[ $current == 4 ]]
+        then
+            current=1
+        fi
+        echo ${timezone[$current]} > /tmp/tz
+        tzvalue=`cat /tmp/tz`
+        echo $tzvalue
+        echo $tzvalue
+        ;;
+    3)
+        echo $tzvalue
+        echo $tzvalue
+        ;;
+    "")
+        dateval=`TZ=$tzvalue date +%a\ %b\ %d\ %k:%M:%S`
+        shortval=`TZ=$tzvalue date +%k:%M:%S`
+        echo "$dateval"
+        echo "$shortval"
+        ;;
+    [1])
+        dateval=`TZ=$tzvalue date +%a\ %b\ %d\ %k:%M:%S`
+        shortval=`TZ=$tzvalue date +%k:%M:%S`
+        echo "$dateval"
+        echo "$shortval"
+        ;;
+    [2])
+        orage -t
+        dateval=`TZ=$tzvalue date +%a\ %b\ %d\ %k:%M:%S`
+        shortval=`TZ=$tzvalue date +%k:%M:%S`
+        echo "$dateval"
+        echo "$shortval"
+        ;;
+esac

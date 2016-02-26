@@ -1,0 +1,97 @@
+#!/bin/bash
+
+CACHE=/tmp/weather
+if [ ! -f /tmp/weather ]
+then
+    echo "HI"
+    touch /tmp/weather
+    echo "Saint_Genis" > /tmp/weather
+fi
+
+if [ ! -f /tmp/unit ]
+then
+    echo "HI"
+    touch /tmp/unit
+    echo "1" > /tmp/unit
+fi
+
+weathervalue=`cat /tmp/weather`
+
+
+location[1]=Minneapolis
+location[2]="Cerro_Largo"
+location[3]="Saint_Genis"
+
+index=0;
+for item in ${location[*]}
+do
+    index=$[$index+1]
+    if [[ $weathervalue == $item ]]
+    then
+        current=$index
+    fi
+done
+
+if [[ $BLOCK_BUTTON == 4 ]]
+then
+    current=$[$current-1]
+    if [[ $current == 0 ]]
+    then
+        current=3
+    fi
+    echo ${location[$current]} > /tmp/weather
+    weathervalue=`cat /tmp/weather`
+#    echo $weathervalue | sed 's/_/ /'
+fi
+
+if [[ $BLOCK_BUTTON == 5 ]]
+then
+    current=$[$current+1]
+    if [[ $current == 4 ]]
+    then
+        current=1
+    fi
+    echo ${location[$current]} > /tmp/weather
+    weathervalue=`cat /tmp/weather`
+#    echo $weathervalue | sed 's/_/ /'
+fi
+
+METRIC=`cat /tmp/unit`
+
+if [[ $BLOCK_BUTTON == 3 ]]
+then
+    if [[ $METRIC == 1 ]]
+    then
+        echo 0 > /tmp/unit
+    fi
+    if [[ $METRIC == 0 ]]
+    then
+        echo 1 > /tmp/unit
+    fi
+fi
+METRIC=`cat /tmp/unit`
+
+if [[ $current == 1 ]]
+then
+loc_id=52246
+fi
+if [[ $current == 2 ]]
+then
+loc_id="BRA|RGS|CERRO-LARGO"
+fi
+if [[ $current == 3 ]]
+then
+loc_id="EUR|FR|FR016|SAINTGENIS"
+fi
+
+
+
+
+# echo -n "$weathervalue: " | sed 's/_/ /'
+fullreport=`curl -s http://rss.accuweather.com/rss/liveweather_rss.asp\?metric\=${METRIC}\&locCode\="$loc_id" | perl -ne 'if (/Currently/) {chomp;/\<title\>Currently: (.*)?\<\/title\>/; print "$1"; }'`
+shortreport=`echo $fullreport | awk -F': ' '{print $2}'`
+color=#00FF00
+echo -n "$weathervalue: " | sed 's/_/ /'
+echo $fullreport
+echo -n "$weathervalue: " | sed 's/_/ /'
+echo $shortreport
