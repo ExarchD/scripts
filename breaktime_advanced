@@ -12,21 +12,25 @@ fi
 number=$RANDOM
 # modulo 80
 let "number %= 80"
+notify-send "You should take a break in $number minutes"
 # set an increment. Walk is increased every time we decline walking 
 let walk=1
 while [ $walk -gt 0 ]
 do
+    currenttime=`date | awk -F' ' '{print $1,$4}'`
     # echo "sleeping ${number} minutes"
     sleep ${number}m
-    zenity --question --text="You should take a 5 minute break, walk around a bit. Want to do this now?" --cancel-label=Later --ok-label=Now
+    zenity --question --text="You should take a 5 minute break, walk around a bit. Want to do this now?" --cancel-label=Later --ok-label=Now  > /dev/null 2>&1
     # reads in the response to the zenity question
     case $? in
         0)
             # echo "Now."
             walk=-1
+            echo $currenttime, 1 >> /home/dpluth/Source/scripts/breaks
             ;;
         1)
             # echo "Later."
+            echo $currenttime, 0 >> /home/dpluth/Source/scripts/breaks
             let "walk=$walk+1"
             ;;
         -1)
@@ -39,6 +43,9 @@ do
     # echo $number
     let "number %= 80"
     # echo $number
-    number=`echo "$number / $walk" | bc`
-    # echo $number
+    if [ $walk -gt 0 ]
+    then
+        number=`echo "$number / $walk" | bc`
+        notify-send "ok, I'll ask again in $number minutes"
+    fi
 done
