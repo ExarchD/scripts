@@ -1,0 +1,25 @@
+#!/bin/bash
+
+
+comp=`gpaste-client --oneline | while read line
+do
+    # if  [[ $line == [0-9]:* ]]
+    if  [[ $line =~ ^[0-9]{,2}:.* ]]
+    then
+        echo $line
+        echo "\n"
+    fi
+done`
+val=`echo -e " "$comp | rofi -i -p "Pasting: " -dmenu`
+if [ -z "$val" ] 
+then 
+    exit 
+fi
+numb=$(echo "$val" | awk -F':' '{print $1}')
+
+case $1 in
+    get )
+        gpaste-client get "$numb";;
+    sel)
+        gpaste-client select "$numb";;
+esac
