@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# id=$(xprop _NET_WM_PID | cut -d' ' -f3)
+dat=$(slop)
+xval=`echo $dat | grep X | awk '{print $1}' | awk -F'=' '{print $2}'`
+yval=`echo $dat | grep Y | awk '{print $2}' | awk -F'=' '{print $2}'`
+wval=`echo $dat | grep H | awk '{print $3}' | awk -F'=' '{print $2}'`
+hval=`echo $dat | grep W | awk '{print $4}' | awk -F'=' '{print $2}'`
+
+
+while true
+do
+    echo "maim --y=$yval --x=$xval --h=$hval --w=$wval ~/Pictures/screenshots/$(date +%F-%T).png"
+    maim --y=$yval --x=$xval --h=$hval --w=$wval ~/Pictures/screenshots/$(date +%F-%T).png
+    sleep 5
+done
